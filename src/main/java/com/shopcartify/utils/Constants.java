@@ -5,7 +5,7 @@ public class Constants {
     public static final String APP_NAME = "ShopCartify";
     public static final String APP_EMAIL = "noreply@shopCartify.africa";
 
-    public static final String IMAGE_PATH = "C:\\Users\\USER\\Desktop\\ShopCartify\\AfterFirstDemo\\ShopCartifyBackendRemy\\ShopCartifyApp\\src\\main\\java\\com\\shopcartify\\images\\";
+    public static final String IMAGE_PATH = "C:\\Users\\USER\\Desktop\\ShopCartify\\AfterFirstDemo\\ShopCartifyApp\\src\\main\\java\\com\\shopcartify\\images\\";
         //            "C:\\Users\\USER\\Desktop\\shopCartifyImages\\";
 
     private static final String MAIL_TEMPLATE_LOCATION = "C:\\Users\\semicolon\\Documents\\spring_projects\\prom-scuous\\src\\main\\resources\\templates\\index.html";

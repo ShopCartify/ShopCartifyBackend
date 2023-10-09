@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Slf4j
-@ActiveProfiles("dev")
+//@ActiveProfiles("dev")
 public class ProductServiceTest {
     @Autowired
     private ProductService productService;
