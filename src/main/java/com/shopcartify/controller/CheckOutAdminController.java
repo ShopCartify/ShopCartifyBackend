@@ -22,7 +22,7 @@ public class CheckOutAdminController {
 //    public Optional<Transaction> viewTransactionById(@PathVariable Long transactionId) {
 //        return checkoutAdmin.viewTransactionById(transactionId);
 //    }
-
+//
 //    @GetMapping("/transactions")
 //    public List<Transaction> viewAllTransactions() {
 //        return checkoutAdmin.viewAllTransactions();
