@@ -30,9 +30,10 @@ public class CartServiceImplementation implements CartService {
     @Override
     public CartResponse addToCart(UpdateCartRequest updateCartRequest) {
         Cart savedCart = new Cart();
-        System.out.println("am here add to cart");
-        if(updateCartRequest.getCartUniqueId().isEmpty() || updateCartRequest.getCartUniqueId() == null){
+
+        if(updateCartRequest.getCartUniqueId() == null || updateCartRequest.getCartUniqueId().isEmpty()){
             savedCart = generateCart(updateCartRequest);
+            savedCart = cartRepository.save(savedCart);
         } else {
             Cart cart = cartRepository.findByUniqueCartId(updateCartRequest.getCartUniqueId())
                     .orElseThrow(()-> new CartNotFoundException("Cart not found"));
@@ -41,10 +42,16 @@ public class CartServiceImplementation implements CartService {
             if(currentTime.isEqual(cart.getTimeCreated().plus(24, ChronoUnit.HOURS))){
                 cartRepository.delete(cart);
                 savedCart = generateCart(updateCartRequest);
+                savedCart = cartRepository.save(savedCart);
             }
+
             CartProduct cartProduct = cartProductService.createCartProduct(updateCartRequest);
-            cart.getCartProducts().add(cartProduct);
-            savedCart = cartRepository.save(cart);
+//            List<CartProduct> cartProductList = new ArrayList<>();
+            List<CartProduct> cartProductList = cart.getCartProducts();
+            cartProductList.add(cartProduct);
+            cart.setCartProducts(cartProductList);
+
+//            savedCart = cartRepository.save(cart);
         }
 
         CartResponse cartResponse = new CartResponse();
@@ -54,19 +61,21 @@ public class CartServiceImplementation implements CartService {
 
     private Cart generateCart(UpdateCartRequest updateCartRequest) {
         Cart cart = new Cart();
-        cart.setCartProducts(new ArrayList<>());
         CartProduct cartProduct = cartProductService.createCartProduct(updateCartRequest);
-        cart.getCartProducts().add(cartProduct);
+
+        List<CartProduct> cartProductList = new ArrayList<>();
+        cartProductList.add(cartProduct);
+        cart.setCartProducts(cartProductList);
+
         cart.setTimeCreated(ZonedDateTime.now(ZoneId.of("Africa/Lagos")));
         return cartRepository.save(cart);
+//        return cart;
     }
 
     @Override
     public int getCartSize(String cartUniqueId) {
         return 0;
     }
-
-
 
     @Override
     public CartResponse removeFromCart(UpdateCartRequest removeFromRequest) {
@@ -91,6 +100,7 @@ public class CartServiceImplementation implements CartService {
 
     @Override
     public Cart findCartByUniqueCartId(String uniqueCartId) {
+        System.out.println(uniqueCartId);
         return cartRepository.findByUniqueCartId(uniqueCartId).orElseThrow(
                     ()-> new CartNotFoundException("Virtual cart does not exist. or your cart might be empty"));
     }

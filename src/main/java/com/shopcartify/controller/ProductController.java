@@ -6,6 +6,7 @@ import com.shopcartify.exceptions.ProductNotFoundException;
 import com.shopcartify.exceptions.ShopCartifyBaseException;
 import com.shopcartify.services.interfaces.ProductService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping("api/v1/productController")
-
+@Slf4j
 public class ProductController {
     private final ProductService productService;
 
@@ -36,6 +37,7 @@ public class ProductController {
     public ResponseEntity<?> findProductByToken(
             @PathVariable String token){
         try {
+            log.info(token);
             return new ResponseEntity<>(
                     new ShopCartifyApiResponse(true,
                     productService.findProductByToken(token)), HttpStatus.OK);
