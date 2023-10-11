@@ -7,4 +7,5 @@ public class UpdateCartRequest {
     private String productName;
     private String supermarketCode;
     private String cartUniqueId;
+    private int numberOfProducts;
 }

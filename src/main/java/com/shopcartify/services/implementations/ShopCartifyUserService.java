@@ -78,7 +78,7 @@ public class ShopCartifyUserService implements UserService {
 
         var savedUser = userRepository.save(newUser);
 
-        System.out.println(savedUser+ " savedUser");
+
         String verificationToken = generateVerificationToken();
         saveUserVerificationToken(savedUser, verificationToken);
 
