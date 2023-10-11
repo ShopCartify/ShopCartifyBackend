@@ -105,6 +105,7 @@ public class ShopCartifyUserService implements UserService {
             return AuthenticationResponse.builder()
                     .message("Registration Not successful. Please Try Again")
                     .Id(savedUser.getUserId())
+                    .email(savedUser.getEmail())
                     .build();
         }
     }
@@ -162,6 +163,7 @@ public class ShopCartifyUserService implements UserService {
         if (user.getRoles().contains(CUSTOMER)) role = CUSTOMER;
         return AuthenticationResponse.builder()
                 .Id(user.getUserId())
+                .email(user.getEmail())
                 .role(role)
                 .token(jwtToken)
                 .message("Login Successful")
