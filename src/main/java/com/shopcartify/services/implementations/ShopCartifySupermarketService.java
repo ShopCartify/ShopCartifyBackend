@@ -48,11 +48,12 @@ public class ShopCartifySupermarketService implements SupermarketService {
         supermarket.setAdmins(new HashSet<>());
         Supermarket savedSupermarket = supermarketRepository.save(supermarket);
 
+
         return SupermarketRegistrationResponse.builder()
                 .supermarketCode(savedSupermarket.getSupermarketCode())
                 .supermarketName(savedSupermarket.getSupermarketName())
                 .supermarketEmail(savedSupermarket.getSupermarketEmail())
-                .message("Supermarket Saved Successfully")
+                .message("Supermarket Saved Successfully. You are an admin")
                 .build();
     }
 

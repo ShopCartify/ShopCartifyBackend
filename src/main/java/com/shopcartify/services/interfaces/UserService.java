@@ -18,6 +18,8 @@ public interface UserService {
 
     ShopCartifyUser changePassword(Long userId, ChangePasswordRequest changePasswordRequest) throws InvalidPasswordException;
 
+    AuthenticationResponse adminLogin(LoginRequest request) throws org.springframework.security.core.AuthenticationException;
+
     List<ShopCartifyUser> getAllUsers();
 
     ShopCartifyUser updateUserProfile(UserProfileUpdateRequest userProfileRequest, String userEmail);
@@ -31,7 +33,7 @@ public interface UserService {
     String validateToken(String verificationToken);
 
     Optional<ShopCartifyUser> findOptionalUserByEmail(String email);
-    AuthenticationResponse login(LoginRequest request) throws AuthenticationException;
+    AuthenticationResponse userLogin(LoginRequest request) throws AuthenticationException;
 
     ShopCartifyUser markUserAsVerified(String token) throws InvalidTokenException;
 

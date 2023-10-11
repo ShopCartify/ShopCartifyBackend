@@ -55,7 +55,20 @@ private final UserRepository userRepository;
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
         try {
-            AuthenticationResponse response = userService.login(loginRequest);
+            AuthenticationResponse response = userService.userLogin(loginRequest);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (AuthenticationException e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PostMapping("/admin_login")
+    public ResponseEntity<AuthenticationResponse> adminLogin(@RequestBody LoginRequest loginRequest) {
+        try {
+            AuthenticationResponse response = userService.adminLogin(loginRequest);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

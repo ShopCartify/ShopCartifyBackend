@@ -43,7 +43,8 @@ public class ShopCartifySupermarketAdminService implements SupermarketAdminServi
 
         return supermarketRegistrationResponse;
     }
-    @Override
+
+        @Override
     public AdminConfirmationResponse confirmNewSupermarketAdmin(String token) {
 
         String supermarketCode = token.substring(0, 5);

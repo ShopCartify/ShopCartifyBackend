@@ -35,6 +35,8 @@ import java.util.*;
 
 import static com.shopcartify.enums.ExceptionMessage.USER_NOT_FOUND_EXCEPTION;
 import static com.shopcartify.enums.ExceptionMessage.USER_WITH_EMAIL_NOT_FOUND_EXCEPTION;
+import static com.shopcartify.enums.UserRole.ADMIN;
+import static com.shopcartify.enums.UserRole.CUSTOMER;
 import static com.shopcartify.utils.Constants.APP_NAME;
 
 
@@ -66,7 +68,7 @@ public class ShopCartifyUserService implements UserService {
             throw new UserAlreadyExistsException(ExceptionMessage.USER_ALREADY_EXISTS);
         }
         Set<UserRole> roles = new HashSet<>();
-        roles.add(UserRole.CUSTOMER);
+        roles.add(CUSTOMER);
         ShopCartifyUser newUser = ShopCartifyUser.builder()
                 .firstName(registrationRequest.getFirstName())
                 .lastName(registrationRequest.getLastName())
@@ -137,7 +139,7 @@ public class ShopCartifyUserService implements UserService {
     }
 
     @Override
-    public AuthenticationResponse login(LoginRequest request) throws AuthenticationException {
+    public AuthenticationResponse userLogin(LoginRequest request) throws AuthenticationException {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -153,9 +155,39 @@ public class ShopCartifyUserService implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User with email " + request.getEmail() + " not found"));
 
         var jwtToken = jwtService.generateToken(user);
+
+        UserRole role = null;
+        if (user.getRoles().contains(CUSTOMER)) role = CUSTOMER;
         return AuthenticationResponse.builder()
                 .Id(user.getUserId())
-//                .role()
+                .role(role)
+                .token(jwtToken)
+                .message("Login Successful")
+                .build();
+    }
+    @Override
+    public AuthenticationResponse adminLogin(LoginRequest request) throws AuthenticationException {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Invalid email or password", e);
+        }
+
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User with email " + request.getEmail() + " not found"));
+
+        var jwtToken = jwtService.generateToken(user);
+
+        UserRole role = null;
+        if (user.getRoles().contains(ADMIN)) role = ADMIN;
+        return AuthenticationResponse.builder()
+                .Id(user.getUserId())
+                .role(role)
                 .token(jwtToken)
                 .message("Login Successful")
                 .build();
