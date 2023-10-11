@@ -19,6 +19,7 @@ public class CartProductController {
 
     @PostMapping("/addToCart")
     public ResponseEntity<CartResponse> addProductToCart(@RequestBody UpdateCartRequest request){
+        System.out.println("add to cart call "+ request);
         CartResponse response = cartService.addToCart(request);
         return ResponseEntity.ok().body(response);
     }

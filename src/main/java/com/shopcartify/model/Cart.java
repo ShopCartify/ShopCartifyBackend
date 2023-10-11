@@ -10,7 +10,7 @@ import java.util.List;
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
      private String uniqueCartId;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

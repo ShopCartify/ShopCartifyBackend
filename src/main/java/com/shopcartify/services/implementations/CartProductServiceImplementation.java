@@ -23,6 +23,7 @@ public class CartProductServiceImplementation implements CartProductService {
         Product foundProduct = productService.findProductBySupermarketCodeAndProductName(updateCartRequest.getSupermarketCode(), updateCartRequest.getProductName());
 
         CartProduct cartProduct = new CartProduct();
+
         BeanUtils.copyProperties(foundProduct,cartProduct);
         cartProduct.setNumberOfProducts(updateCartRequest.getNumberOfProducts());
 

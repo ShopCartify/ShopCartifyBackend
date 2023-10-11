@@ -2,6 +2,7 @@ package com.shopcartify.services.interfaces;
 
 import com.shopcartify.dto.reqests.UpdateCartRequest;
 import com.shopcartify.dto.reqests.CartResponse;
+import com.shopcartify.model.Cart;
 
 public interface CartService {
     CartResponse addToCart(UpdateCartRequest addToCartRequest);
@@ -9,4 +10,5 @@ public interface CartService {
     int getCartSize(String cartUniqueId);
 
     CartResponse removeFromCart(UpdateCartRequest addToCartRequest);
+    Cart findCartByUniqueCartId(String uniqueCartId);
 }

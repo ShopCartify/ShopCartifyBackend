@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -53,6 +54,7 @@ public class CartServiceImplementation implements CartService {
 
     private Cart generateCart(UpdateCartRequest updateCartRequest) {
         Cart cart = new Cart();
+        cart.setCartProducts(new ArrayList<>());
         CartProduct cartProduct = cartProductService.createCartProduct(updateCartRequest);
         cart.getCartProducts().add(cartProduct);
         cart.setTimeCreated(ZonedDateTime.now(ZoneId.of("Africa/Lagos")));
@@ -63,6 +65,8 @@ public class CartServiceImplementation implements CartService {
     public int getCartSize(String cartUniqueId) {
         return 0;
     }
+
+
 
     @Override
     public CartResponse removeFromCart(UpdateCartRequest removeFromRequest) {
@@ -83,5 +87,11 @@ public class CartServiceImplementation implements CartService {
         CartResponse cartResponse = new CartResponse();
         cartResponse.setCartSize(savedCart.getCartProducts().size());
         return cartResponse;
+    }
+
+    @Override
+    public Cart findCartByUniqueCartId(String uniqueCartId) {
+        return cartRepository.findByUniqueCartId(uniqueCartId).orElseThrow(
+                    ()-> new CartNotFoundException("Virtual cart does not exist. or your cart might be empty"));
     }
 }
