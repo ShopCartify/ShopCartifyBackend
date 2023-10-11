@@ -31,8 +31,8 @@ public class SupermarketAdminController {
             return new ResponseEntity<>(new ShopCartifyApiResponse(true, supermarketAdminService.registerSupermarketAdmin(superMarketAdminRegistrationRequest))
                     , HttpStatus.OK);
         } catch (ShopCartifyBaseException shopCartifyBaseException) {
-            return new ResponseEntity<>((new ShopCartifyApiResponse(false, shopCartifyBaseException.getMessage()))
-                    , HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>((new ShopCartifyApiResponse(false, shopCartifyBaseException.getMessage()))
+                        , HttpStatus.NOT_FOUND);
         }
 
     }

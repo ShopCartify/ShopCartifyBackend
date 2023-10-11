@@ -29,7 +29,7 @@ public class CartServiceImplementation implements CartService {
     @Override
     public CartResponse addToCart(UpdateCartRequest updateCartRequest) {
         Cart savedCart = new Cart();
-
+        System.out.println("am here add to cart");
         if(updateCartRequest.getCartUniqueId().isEmpty() || updateCartRequest.getCartUniqueId() == null){
             savedCart = generateCart(updateCartRequest);
         } else {

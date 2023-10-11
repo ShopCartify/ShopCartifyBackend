@@ -4,6 +4,7 @@ package com.shopcartify.registration;
 import com.shopcartify.dto.reqests.LoginRequest;
 import com.shopcartify.dto.reqests.UserRegistrationRequest;
 import com.shopcartify.dto.responses.AuthenticationResponse;
+import com.shopcartify.dto.responses.ShopCartifyApiResponse;
 import com.shopcartify.dto.responses.UserRegistrationResponse;
 import com.shopcartify.exceptions.InvalidTokenException;
 import com.shopcartify.exceptions.UserAlreadyExistsException;
@@ -35,7 +36,7 @@ private final MessageService messageService;
 private final UserRepository userRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody UserRegistrationRequest registrationRequest) {
+    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest registrationRequest) {
 
         try {
             UserRegistrationResponse response = new UserRegistrationResponse();
@@ -43,8 +44,10 @@ private final UserRepository userRepository;
 
             return new ResponseEntity<>(userService.registerUser(registrationRequest), HttpStatus.CREATED);
         } catch (UserAlreadyExistsException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new AuthenticationResponse("User with this email already exists."));
+            return new ResponseEntity<>(new ShopCartifyApiResponse(false, e.getMessage()),
+                    HttpStatus.CONFLICT);
+//            return ResponseEntity.status(HttpStatus.CONFLICT)
+//                    .body(new AuthenticationResponse("User with this email already exists."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new AuthenticationResponse("An error occurred during registration."));

@@ -63,8 +63,9 @@ public class ShopCartifyUserService implements UserService {
     @Override
     public AuthenticationResponse registerUser(UserRegistrationRequest registrationRequest) {
         Optional<ShopCartifyUser> user = userRepository.findByEmail(registrationRequest.getEmail());
-        System.out.println(registrationRequest);
+
         if (user.isPresent()) {
+            log.info("user already exists");
             throw new UserAlreadyExistsException(ExceptionMessage.USER_ALREADY_EXISTS);
         }
         Set<UserRole> roles = new HashSet<>();
@@ -103,6 +104,7 @@ public class ShopCartifyUserService implements UserService {
             log.error("User's email address is missing or empty. Cannot send verification email.");
             return AuthenticationResponse.builder()
                     .message("Registration Not successful. Please Try Again")
+                    .Id(savedUser.getUserId())
                     .build();
         }
     }

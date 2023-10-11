@@ -17,13 +17,13 @@ public class CartProductController {
 
     private final CartService cartService;
 
-    @PostMapping("/addProduct")
+    @PostMapping("/addToCart")
     public ResponseEntity<CartResponse> addProductToCart(@RequestBody UpdateCartRequest request){
         CartResponse response = cartService.addToCart(request);
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/removeProduct")
+    @PostMapping("/removeFromCart")
     public ResponseEntity<CartResponse> removeProductFromCart(@RequestBody UpdateCartRequest request){
         CartResponse response = cartService.removeFromCart(request);
         return ResponseEntity.ok().body(response);
