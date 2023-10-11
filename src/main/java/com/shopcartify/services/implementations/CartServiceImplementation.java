@@ -27,33 +27,31 @@ public class CartServiceImplementation implements CartService {
 
     CartRepository cartRepository;
     CartProductService cartProductService;
-        @Override
+    @Override
+
     public CartResponse addToCart(UpdateCartRequest updateCartRequest) {
-            Cart savedCart = new Cart();
+        Cart savedCart = new Cart();
+        System.out.println("am here add to cart");
+        if(updateCartRequest.getCartUniqueId().isEmpty() || updateCartRequest.getCartUniqueId() == null){
+            savedCart = generateCart(updateCartRequest);
+        } else {
+            Cart cart = cartRepository.findByUniqueCartId(updateCartRequest.getCartUniqueId())
+                    .orElseThrow(()-> new CartNotFoundException("Cart not found"));
 
-            if (updateCartRequest.getCartUniqueId() == null || updateCartRequest.getCartUniqueId().isEmpty()) {
+            ZonedDateTime currentTime = ZonedDateTime.now(ZoneId.of("Africa/Lagos"));
+            if(currentTime.isEqual(cart.getTimeCreated().plus(24, ChronoUnit.HOURS))){
+                cartRepository.delete(cart);
                 savedCart = generateCart(updateCartRequest);
-                savedCart = cartRepository.save(savedCart);
-            } else {
-                Cart cart = cartRepository.findByUniqueCartId(updateCartRequest.getCartUniqueId())
-                        .orElseThrow(() -> new CartNotFoundException("Cart not found"));
-
-                ZonedDateTime currentTime = ZonedDateTime.now(ZoneId.of("Africa/Lagos"));
-                if (currentTime.isEqual(cart.getTimeCreated().plus(24, ChronoUnit.HOURS))) {
-                    cartRepository.delete(cart);
-                    savedCart = generateCart(updateCartRequest);
-                    savedCart = cartRepository.save(savedCart);
-                }
-
-                CartProduct cartProduct = cartProductService.createCartProduct(updateCartRequest);
-//            List<CartProduct> cartProductList = new ArrayList<>();
-                List<CartProduct> cartProductList = cart.getCartProducts();
-                cartProductList.add(cartProduct);
-                cart.setCartProducts(cartProductList);
-
-//            savedCart = cartRepository.save(cart);
             }
+            CartProduct cartProduct = cartProductService.createCartProduct(updateCartRequest);
+            cart.getCartProducts().add(cartProduct);
+            savedCart = cartRepository.save(cart);
         }
+
+        CartResponse cartResponse = new CartResponse();
+        cartResponse.setCartSize(savedCart.getCartProducts().size());
+        return cartResponse;
+    }
 
     private Cart generateCart(UpdateCartRequest updateCartRequest) {
         Cart cart = new Cart();
