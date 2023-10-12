@@ -5,4 +5,6 @@ import com.shopcartify.model.CartProduct;
 
 public interface CartProductService {
     CartProduct createCartProduct(UpdateCartRequest updateCartRequest);
+
+    CartProduct findById(Long cartProductId);
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CartProductServiceImplementation implements CartProductService {
     private ProductService productService;
+    private CartProductRepository cartProductRepository;
     @Override
     public CartProduct createCartProduct(UpdateCartRequest updateCartRequest) {
 
@@ -26,7 +27,14 @@ public class CartProductServiceImplementation implements CartProductService {
 
         BeanUtils.copyProperties(foundProduct,cartProduct);
         cartProduct.setNumberOfProducts(updateCartRequest.getNumberOfProducts());
+        cartProduct.setUniqueCartId(updateCartRequest.getUniqueCartId());
 
-        return cartProduct;
+        return cartProductRepository.save(cartProduct);
+    }
+
+    @Override
+    public CartProduct findById(Long cartProductId) {
+        return cartProductRepository.findById(cartProductId)
+                .orElseThrow(()->new ProductNotFoundException("product not found"));
     }
 }

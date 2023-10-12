@@ -34,7 +34,7 @@ public class GeneratorFactory {
         return generatedSupermarketCode;
     }
 
-    private String generateCode() {
+    public String generateCode() {
         StringBuilder randomString = new StringBuilder();
 
             randomString

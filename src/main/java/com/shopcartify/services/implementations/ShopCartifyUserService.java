@@ -163,6 +163,8 @@ public class ShopCartifyUserService implements UserService {
         if (user.getRoles().contains(CUSTOMER)) role = CUSTOMER;
         return AuthenticationResponse.builder()
                 .Id(user.getUserId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .email(user.getEmail())
                 .role(role)
                 .token(jwtToken)
@@ -191,6 +193,9 @@ public class ShopCartifyUserService implements UserService {
         if (user.getRoles().contains(ADMIN)) role = ADMIN;
         return AuthenticationResponse.builder()
                 .Id(user.getUserId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
                 .role(role)
                 .token(jwtToken)
                 .message("Login Successful")

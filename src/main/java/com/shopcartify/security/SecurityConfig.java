@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/productController/**").permitAll())
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/v1/cartProduct/**").permitAll())
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/api/v1/cart/**").permitAll())
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

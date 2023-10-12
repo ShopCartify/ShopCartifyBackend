@@ -6,6 +6,6 @@ import lombok.Data;
 public class UpdateCartRequest {
     private String productName;
     private String supermarketCode;
-    private String cartUniqueId;
+    private String uniqueCartId;
     private int numberOfProducts;
 }

@@ -18,5 +18,9 @@ public class CartProduct {
     private BigDecimal productPrice;
     private String productDescription;
     private String supermarketCode;
+    private String uniqueCartId;
+
+//    @JoinColumn(name = "cart_products_id")
+
 
 }

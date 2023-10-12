@@ -4,12 +4,14 @@ import com.shopcartify.dto.reqests.CartResponse;
 import com.shopcartify.dto.reqests.UpdateCartRequest;
 
 import com.shopcartify.exceptions.CartNotFoundException;
+import com.shopcartify.factory.GeneratorFactory;
 import com.shopcartify.model.Cart;
 import com.shopcartify.model.CartProduct;
 import com.shopcartify.repositories.CartRepository;
 import com.shopcartify.services.interfaces.CartProductService;
 import com.shopcartify.services.interfaces.CartService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
@@ -23,76 +25,110 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CartServiceImplementation implements CartService {
 
-    CartRepository cartRepository;
-    CartProductService cartProductService;
+    private CartRepository cartRepository;
+    private CartProductService cartProductService;
+    private GeneratorFactory generatorFactory;
     @Override
 
     public CartResponse addToCart(UpdateCartRequest updateCartRequest) {
-        Cart savedCart = new Cart();
-        System.out.println("am here add to cart");
-        if(updateCartRequest.getCartUniqueId().isEmpty() || updateCartRequest.getCartUniqueId() == null){
-            savedCart = generateCart(updateCartRequest);
+        Cart cart = new Cart();
+        if( updateCartRequest.getUniqueCartId() == null ||updateCartRequest.getUniqueCartId().isEmpty() ){
+            cart = generateCart();
         } else {
-            Cart cart = cartRepository.findByUniqueCartId(updateCartRequest.getCartUniqueId())
-                    .orElseThrow(()-> new CartNotFoundException("Cart not found"));
+
+
+            cart = cartRepository.findByUniqueCartId(updateCartRequest.getUniqueCartId())
+                    .orElse( generateCart());
+
 
             ZonedDateTime currentTime = ZonedDateTime.now(ZoneId.of("Africa/Lagos"));
             if(currentTime.isEqual(cart.getTimeCreated().plus(24, ChronoUnit.HOURS))){
                 cartRepository.delete(cart);
-                savedCart = generateCart(updateCartRequest);
+                cart = generateCart();
             }
-            CartProduct cartProduct = cartProductService.createCartProduct(updateCartRequest);
-            cart.getCartProducts().add(cartProduct);
-            savedCart = cartRepository.save(cart);
         }
+        updateCartRequest.setUniqueCartId(cart.getUniqueCartId());
+            CartProduct cartProduct = cartProductService.createCartProduct(updateCartRequest);
+//            cart.getCartProducts().add(cartProduct);
+
+            List<Long > cartProductIds = cart.getCartProductIds();
+
+            cartProductIds.add(cartProduct.getId());
+
+
+            cart.setCartProductIds(cartProductIds);
+
+        Cart savedCart = cartRepository.save(cart);
 
         CartResponse cartResponse = new CartResponse();
-        cartResponse.setCartSize(savedCart.getCartProducts().size());
+
+        cartResponse.setCartSize(savedCart.getCartProductIds().size());
+        cartResponse.setUniqueCartId(cart.getUniqueCartId());
+
         return cartResponse;
     }
 
-    private Cart generateCart(UpdateCartRequest updateCartRequest) {
+    private Cart generateCart() {
         Cart cart = new Cart();
-        cart.setCartProducts(new ArrayList<>());
-        CartProduct cartProduct = cartProductService.createCartProduct(updateCartRequest);
-        cart.getCartProducts().add(cartProduct);
+
+//        cart.setCartProducts(new ArrayList<>());
+        cart.setCartProductIds(new ArrayList<>());
+
+       cart.setUniqueCartId(generateUniqueCartId());
         cart.setTimeCreated(ZonedDateTime.now(ZoneId.of("Africa/Lagos")));
-        return cartRepository.save(cart);
+
+        return cart;
+    }
+
+    private String generateUniqueCartId() {
+        return generatorFactory.generateCode() + generatorFactory.generateCode();
     }
 
     @Override
     public int getCartSize(String cartUniqueId) {
-        return 0;
+        return cartRepository.findByUniqueCartId(cartUniqueId)
+                .orElseThrow(()-> new CartNotFoundException("No such cart exists "))
+//                .getCartProducts().size()
+                .getCartProductIds().size();
     }
 
 
 
     @Override
     public CartResponse removeFromCart(UpdateCartRequest removeFromRequest) {
-        Cart cart = cartRepository.findByUniqueCartId(removeFromRequest.getCartUniqueId())
-                .orElseThrow(()-> new CartNotFoundException("Cart not found"));
+        Cart cart = cartRepository.findByUniqueCartId(removeFromRequest.getUniqueCartId())
+                .orElseThrow(()-> new CartNotFoundException("Cart no longer exists or cart is empty"));
 
-        List<CartProduct> productsInCart = cart.getCartProducts();
+
+
+        List<Long> productsIdsInCart = cart.getCartProductIds();
         Cart savedCart = new Cart();
-        for (int i = 0; i < productsInCart.size(); i++) {
-            boolean isProduct = productsInCart.get(i).getProductName().equals(removeFromRequest.getProductName())
-                    && productsInCart.get(i).getSupermarketCode().equals(removeFromRequest.getSupermarketCode());
+
+        for (int i = 0; i < productsIdsInCart.size(); i++) {
+
+            CartProduct cartproduct = cartProductService.findById(productsIdsInCart.get(i));
+            boolean isProduct =
+                    cartproduct.getProductName().equals(removeFromRequest.getProductName())
+                    && cartproduct.getSupermarketCode().equals(removeFromRequest.getSupermarketCode());
             if(isProduct){
-                productsInCart.remove(productsInCart.get(i));
+
+                productsIdsInCart.remove(productsIdsInCart.get(i));
             }
-            savedCart = cartRepository.save(cart);
         }
+            savedCart = cartRepository.save(cart);
 
         CartResponse cartResponse = new CartResponse();
-        cartResponse.setCartSize(savedCart.getCartProducts().size());
+        cartResponse.setCartSize(savedCart.getCartProductIds().size());
+        cartResponse.setUniqueCartId(cart.getUniqueCartId());
         return cartResponse;
     }
 
     @Override
     public Cart findCartByUniqueCartId(String uniqueCartId) {
-        System.out.println(uniqueCartId);
+
         return cartRepository.findByUniqueCartId(uniqueCartId).orElseThrow(
                     ()-> new CartNotFoundException("Virtual cart does not exist. or your cart might be empty"));
     }
