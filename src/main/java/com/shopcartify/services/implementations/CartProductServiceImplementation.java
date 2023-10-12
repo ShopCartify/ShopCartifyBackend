@@ -13,6 +13,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class CartProductServiceImplementation implements CartProductService {
@@ -36,5 +39,14 @@ public class CartProductServiceImplementation implements CartProductService {
     public CartProduct findById(Long cartProductId) {
         return cartProductRepository.findById(cartProductId)
                 .orElseThrow(()->new ProductNotFoundException("product not found"));
+    }
+
+    @Override
+    public List<CartProduct> findCartProductsByIds(List<Long> cartProductIds) {
+        List<CartProduct> cartProducts = new ArrayList<>();
+        for (Long cartProductId : cartProductIds) {
+            cartProducts.add(cartProductRepository.findById(cartProductId).orElse(null));
+            }
+        return cartProducts;
     }
 }

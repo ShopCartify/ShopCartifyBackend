@@ -70,11 +70,12 @@ public class ShopCartifyUserService implements UserService {
         }
         Set<UserRole> roles = new HashSet<>();
         roles.add(CUSTOMER);
+        String email = registrationRequest.getEmail().toLowerCase().strip();
         ShopCartifyUser newUser = ShopCartifyUser.builder()
                 .firstName(registrationRequest.getFirstName())
                 .lastName(registrationRequest.getLastName())
                 .userName(registrationRequest.getUserName())
-                .email(registrationRequest.getEmail())
+                .email(email)
                 .password(passwordEncoder.encode(registrationRequest.getPassword()))
                 .roles(roles)
                 .build();
@@ -93,7 +94,7 @@ public class ShopCartifyUserService implements UserService {
 
             String jwtToken = jwtService.generateToken(savedUser);
 
-//            emailService.sendEmail(savedUser.getEmail(), emailSubject, emailContent);
+            emailService.sendEmail(savedUser.getEmail(), emailSubject, emailContent);
 
             return AuthenticationResponse.builder()
                     .Id(savedUser.getUserId())

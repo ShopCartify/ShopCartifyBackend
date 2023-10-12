@@ -129,9 +129,20 @@ public class CartServiceImplementation implements CartService {
     @Override
     public Cart findCartByUniqueCartId(String uniqueCartId) {
 
-        return cartRepository.findByUniqueCartId(uniqueCartId).orElseThrow(
+         return cartRepository.findByUniqueCartId(uniqueCartId).orElseThrow(
                     ()-> new CartNotFoundException("Virtual cart does not exist. or your cart might be empty"));
+
     }
+    @Override
+    public List<CartProduct>  findAllCartProductsByUniqueCartId(String uniqueCartId) {
+
+        Cart cart = findCartByUniqueCartId(uniqueCartId);
+
+        List<Long> cartProductIds = cart.getCartProductIds();
+
+        return cartProductService.findCartProductsByIds(cartProductIds);
+    }
+
 }
 //package com.shopcartify.services.implementations;
 //

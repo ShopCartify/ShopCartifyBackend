@@ -25,6 +25,7 @@ public class Product {
 
 //    @NonNull
     private String supermarketCode;
+    private String supermarketName;
 
 
 }

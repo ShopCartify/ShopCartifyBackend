@@ -40,4 +40,14 @@ public class CartController {
                     , HttpStatus.NOT_FOUND);
         }
    }
+    @GetMapping("/findAllCartProductsByUniqueCartId/{uniqueCartId}")
+    public ResponseEntity<?> findAllCartProductsByUniqueCartId(@PathVariable String uniqueCartId) {
+        try {
+            return new ResponseEntity<>(new ShopCartifyApiResponse(true, cartService.findAllCartProductsByUniqueCartId(uniqueCartId))
+                    , HttpStatus.OK);
+        }catch (ShopCartifyBaseException shopCartifyBaseException){
+            return new ResponseEntity<>((new ShopCartifyApiResponse(false,shopCartifyBaseException.getMessage()))
+                    , HttpStatus.NOT_FOUND);
+        }
+    }
 }
