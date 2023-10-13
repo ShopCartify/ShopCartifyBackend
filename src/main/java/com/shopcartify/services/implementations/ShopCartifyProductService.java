@@ -71,7 +71,7 @@ public class ShopCartifyProductService implements ProductService {
                BeanUtils.copyProperties(savedProduct, newProductResponse);
                newProductResponse.setMessage("Product added successfully");
 
-//            sendEmailToSupermarketAdmin(newProductRequest.getSupermarketAdminEmail(), savedProduct);
+//            emailService.sendEmailForNewProduct();
            }catch (Exception e) {
                log.error(e.getMessage());
 
