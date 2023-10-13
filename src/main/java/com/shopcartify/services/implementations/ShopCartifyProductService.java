@@ -7,12 +7,14 @@ import com.shopcartify.dto.responses.NewProductResponse;
 import com.shopcartify.dto.responses.UpdateProductDetailResponse;
 import com.shopcartify.exceptions.ProductAlreadyExistsException;
 import com.shopcartify.exceptions.ProductNotFoundException;
+import com.shopcartify.exceptions.ShopCartifyBaseException;
 import com.shopcartify.factory.QrCodeGeneratorFactory;
 import com.shopcartify.mailSender.EmailService;
 import com.shopcartify.model.Product;
 import com.shopcartify.replica.ProductReplica;
 import com.shopcartify.repositories.ProductRepository;
 import com.shopcartify.services.interfaces.ProductService;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,7 +74,7 @@ public class ShopCartifyProductService implements ProductService {
                BeanUtils.copyProperties(savedProduct, newProductResponse);
                newProductResponse.setMessage("Product added successfully");
 
-//            emailService.sendEmailForNewProduct();
+               sendEmailToSupermarketAdmin( qrcodeCloudImageUrl, newProductRequest.getSupermarketAdminEmail(),  savedProduct);
            }catch (Exception e) {
                log.error(e.getMessage());
 
@@ -134,7 +137,7 @@ public class ShopCartifyProductService implements ProductService {
     }
 
 
-    private void sendEmailToSupermarketAdmin(String adminEmail, Product savedProduct) {
+    private void sendEmailToSupermarketAdmin(String qrcode, String adminEmail, Product savedProduct) {
         String subject = "New Product Added: " + savedProduct.getProductName();
         StringBuilder message = new StringBuilder();
         message.append("A new product has been added:\n\n");
@@ -145,6 +148,12 @@ public class ShopCartifyProductService implements ProductService {
         message.append("Product QR Code URL: ").append(savedProduct.getProductQrCodeUrl()).append("\n");
 
         emailService.sendEmail(adminEmail, subject, message.toString());
+
+        try {
+            emailService.sendEmailForNewProduct(qrcode,savedProduct.getProductName(),savedProduct.getSupermarketName(),adminEmail);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new ShopCartifyBaseException(e.getMessage());
+        }
     }
 
 }

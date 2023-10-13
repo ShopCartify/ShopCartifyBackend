@@ -6,7 +6,6 @@ import com.shopcartify.exceptions.ProductNotFoundException;
 import com.shopcartify.model.CartProduct;
 import com.shopcartify.model.Product;
 import com.shopcartify.repositories.CartProductRepository;
-import com.shopcartify.repositories.ProductRepository;
 import com.shopcartify.services.interfaces.CartProductService;
 import com.shopcartify.services.interfaces.ProductService;
 import lombok.AllArgsConstructor;
@@ -29,7 +28,7 @@ public class CartProductServiceImplementation implements CartProductService {
         CartProduct cartProduct = new CartProduct();
 
         BeanUtils.copyProperties(foundProduct,cartProduct);
-        cartProduct.setNumberOfProducts(updateCartRequest.getNumberOfProducts());
+        cartProduct.setProductQuantity(updateCartRequest.getNumberOfProducts());
         cartProduct.setUniqueCartId(updateCartRequest.getUniqueCartId());
 
         return cartProductRepository.save(cartProduct);

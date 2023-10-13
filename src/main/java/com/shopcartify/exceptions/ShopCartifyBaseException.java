@@ -1,7 +1,7 @@
 package com.shopcartify.exceptions;
 
 public class ShopCartifyBaseException extends RuntimeException{
-    ShopCartifyBaseException(String message){
+    public ShopCartifyBaseException(String message){
         super(message);
     }
     ShopCartifyBaseException(){

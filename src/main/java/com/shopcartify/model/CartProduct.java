@@ -12,7 +12,7 @@ public class CartProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int numberOfProducts;
+    private int productQuantity;
     private String productName;
     private String productImageUrl;
     private BigDecimal productPrice;

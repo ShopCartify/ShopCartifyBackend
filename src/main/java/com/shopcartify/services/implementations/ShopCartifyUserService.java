@@ -7,10 +7,7 @@ import com.shopcartify.dto.reqests.UserRegistrationRequest;
 import com.shopcartify.dto.responses.AuthenticationResponse;
 import com.shopcartify.enums.ExceptionMessage;
 import com.shopcartify.enums.UserRole;
-import com.shopcartify.exceptions.InvalidPasswordException;
-import com.shopcartify.exceptions.InvalidTokenException;
-import com.shopcartify.exceptions.UserAlreadyExistsException;
-import com.shopcartify.exceptions.UserNotFoundException;
+import com.shopcartify.exceptions.*;
 import com.shopcartify.mailSender.EmailService;
 import com.shopcartify.messages.MessageService;
 import com.shopcartify.model.ShopCartifyUser;
@@ -19,6 +16,7 @@ import com.shopcartify.repositories.UserRepository;
 import com.shopcartify.repositories.VerificationTokenRepository;
 import com.shopcartify.security.config.jwt.JwtService;
 import com.shopcartify.services.interfaces.UserService;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.security.core.AuthenticationException;
 
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import static com.shopcartify.enums.ExceptionMessage.USER_NOT_FOUND_EXCEPTION;
@@ -95,7 +94,11 @@ public class ShopCartifyUserService implements UserService {
             String jwtToken = jwtService.generateToken(savedUser);
 
             emailService.sendEmail(savedUser.getEmail(), emailSubject, emailContent);
-
+            try {
+                emailService.sendEmailForRegistration(savedUser.getEmail(), emailSubject, emailContent);
+            } catch (MessagingException | UnsupportedEncodingException e) {
+                throw new ShopCartifyBaseException(e.getMessage());
+            }
             return AuthenticationResponse.builder()
                     .Id(savedUser.getUserId())
                     .token(jwtToken)
