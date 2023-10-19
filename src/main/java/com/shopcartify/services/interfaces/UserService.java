@@ -1,13 +1,11 @@
 package com.shopcartify.services.interfaces;
 
-import com.shopcartify.dto.reqests.ChangePasswordRequest;
-import com.shopcartify.dto.reqests.LoginRequest;
-import com.shopcartify.dto.reqests.UserProfileUpdateRequest;
-import com.shopcartify.dto.reqests.UserRegistrationRequest;
+import com.shopcartify.dto.reqests.*;
 import com.shopcartify.dto.responses.AuthenticationResponse;
 import com.shopcartify.exceptions.InvalidPasswordException;
 import com.shopcartify.exceptions.InvalidTokenException;
 import com.shopcartify.model.ShopCartifyUser;
+import org.springframework.data.domain.Page;
 
 import javax.security.sasl.AuthenticationException;
 import java.util.List;
@@ -21,6 +19,7 @@ public interface UserService {
     AuthenticationResponse adminLogin(LoginRequest request) throws org.springframework.security.core.AuthenticationException;
 
     List<ShopCartifyUser> getAllUsers();
+    Page<ShopCartifyUser> findAllUsers(FindAllRequest findAllUserRequest);
 
     ShopCartifyUser updateUserProfile(UserProfileUpdateRequest userProfileRequest, String userEmail);
 

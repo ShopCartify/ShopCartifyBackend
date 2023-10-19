@@ -10,27 +10,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.shopcartify.utils.ApiConstant.*;
+
 @RestController
-@RequestMapping("/api/v1/cart")
+@RequestMapping(CART_CONTROLLER)
 @AllArgsConstructor
 public class CartController {
 
     private final CartService cartService;
 
-    @PostMapping("/addToCart")
+    @PostMapping(ADD_TO_CART)
     public ResponseEntity<CartResponse> addProductToCart(@RequestBody UpdateCartRequest request){
 
         CartResponse response = cartService.addToCart(request);
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/removeFromCart")
+    @PostMapping(REMOVE_FROM_CART)
     public ResponseEntity<CartResponse> removeProductFromCart(@RequestBody UpdateCartRequest request){
         CartResponse response = cartService.removeFromCart(request);
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/findCartByUniqueCartId/{uniqueCartId}")
+    @GetMapping(FIND_CART_BY_UNIQUE_CART_ID)
    public ResponseEntity<?> findCartByUniqueCartId(@PathVariable String uniqueCartId) {
         try {
             return new ResponseEntity<>(new ShopCartifyApiResponse(true, cartService.findCartByUniqueCartId(uniqueCartId))
@@ -40,7 +42,7 @@ public class CartController {
                     , HttpStatus.NOT_FOUND);
         }
    }
-    @GetMapping("/findAllCartProductsByUniqueCartId/{uniqueCartId}")
+    @GetMapping(FIND_CART_PRODUCT_BY_UNIQUE_CART_ID)
     public ResponseEntity<?> findAllCartProductsByUniqueCartId(@PathVariable String uniqueCartId) {
         try {
             return new ResponseEntity<>(new ShopCartifyApiResponse(true, cartService.findAllCartProductsByUniqueCartId(uniqueCartId))

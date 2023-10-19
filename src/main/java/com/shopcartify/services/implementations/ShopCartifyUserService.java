@@ -1,9 +1,6 @@
 package com.shopcartify.services.implementations;
 
-import com.shopcartify.dto.reqests.ChangePasswordRequest;
-import com.shopcartify.dto.reqests.LoginRequest;
-import com.shopcartify.dto.reqests.UserProfileUpdateRequest;
-import com.shopcartify.dto.reqests.UserRegistrationRequest;
+import com.shopcartify.dto.reqests.*;
 import com.shopcartify.dto.responses.AuthenticationResponse;
 import com.shopcartify.enums.ExceptionMessage;
 import com.shopcartify.enums.UserRole;
@@ -19,6 +16,9 @@ import com.shopcartify.services.interfaces.UserService;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -74,7 +74,7 @@ public class ShopCartifyUserService implements UserService {
                 .firstName(registrationRequest.getFirstName())
                 .lastName(registrationRequest.getLastName())
                 .userName(registrationRequest.getUserName())
-                .email(email)
+                .email(email.toLowerCase().strip())
                 .password(passwordEncoder.encode(registrationRequest.getPassword()))
                 .roles(roles)
                 .build();
@@ -150,7 +150,7 @@ public class ShopCartifyUserService implements UserService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
+                            request.getEmail().toLowerCase().strip(),
                             request.getPassword()
                     )
             );
@@ -206,9 +206,18 @@ public class ShopCartifyUserService implements UserService {
                 .build();
     }
     @Override
+    public Page<ShopCartifyUser> findAllUsers(FindAllRequest findAllUserRequest) {
+        return userRepository
+                .findAll(PageRequest.of(findAllUserRequest.getOffset(), findAllUserRequest.getPageSite())
+                        .withSort(Sort.by(Sort.Direction
+                                .fromString(findAllUserRequest.getDirection()),findAllUserRequest.getField())));
+
+    }
+    @Override
     public List<ShopCartifyUser> getAllUsers() {
         return userRepository.findAll();
     }
+
     @Override
     public ShopCartifyUser findByUserName(String username) {
         return userRepository.findByUserName(username).orElseThrow(() -> new UserNotFoundException(USER_WITH_USERNAME_NOT_FOUND_EXCEPTION));

@@ -11,9 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.shopcartify.utils.ApiConstant.FIND_PRODUCT_BY_TOKEN;
+import static com.shopcartify.utils.ApiConstant.PRODUCT_CONTROLLER;
+
 @AllArgsConstructor
 @RestController
-@RequestMapping("api/v1/productController")
+@RequestMapping(PRODUCT_CONTROLLER)
 @Slf4j
 public class ProductController {
     private final ProductService productService;
@@ -33,7 +36,7 @@ public class ProductController {
 
 
 
-    @GetMapping("/findProductByToken/{token}")
+    @GetMapping(FIND_PRODUCT_BY_TOKEN)
     public ResponseEntity<?> findProductByToken(
             @PathVariable String token){
         try {

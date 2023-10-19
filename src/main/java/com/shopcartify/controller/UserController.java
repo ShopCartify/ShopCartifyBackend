@@ -2,6 +2,7 @@ package com.shopcartify.controller;
 
 
 import com.shopcartify.dto.reqests.ChangePasswordRequest;
+import com.shopcartify.dto.reqests.FindAllRequest;
 import com.shopcartify.dto.reqests.UserProfileUpdateRequest;
 import com.shopcartify.exceptions.InvalidPasswordException;
 import com.shopcartify.exceptions.UserNotFoundException;
@@ -9,6 +10,7 @@ import com.shopcartify.exceptions.UserProfileUpdateException;
 import com.shopcartify.model.*;
 import com.shopcartify.services.interfaces.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -19,9 +21,11 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import static com.shopcartify.utils.ApiConstant.*;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/user")
+@RequestMapping(USER_CONTROLLER)
 public class UserController {
 
     private final UserService userService;
@@ -34,7 +38,7 @@ public class UserController {
 
     private final ProductService productService;
 
-    @GetMapping("/find-by-id/{userId}")
+    @GetMapping(FIND_USER_BY_ID)
     public ResponseEntity<ShopCartifyUser> findUserById(@PathVariable Long userId) {
         try {
             ShopCartifyUser user = userService.findUserById(userId);
@@ -44,22 +48,26 @@ public class UserController {
         }
     }
 
-    @GetMapping("/find-by-user-email")
+    @GetMapping(FIND_USER_BY_EMAIL)
     public ResponseEntity<?> findUserByEmail(@RequestParam("email") String email) {
         return new ResponseEntity<>(userService.findByEmail(email), HttpStatus.OK);
     }
 
-    @GetMapping("/users")
+    @GetMapping(FIND_ALL_USERS)
+    public ResponseEntity<Page<ShopCartifyUser>>findAllUsers(@RequestBody FindAllRequest findAllUserRequest){
+        return new ResponseEntity<>(userService.findAllUsers(findAllUserRequest), HttpStatus.OK);
+    }
+    @GetMapping(GET_ALL_USERS)
     public ResponseEntity<List<ShopCartifyUser>>getAllUsers(){
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/find-by-username")
+    @GetMapping(FIND_USER_BY_USER_NAME)
     public ResponseEntity<ShopCartifyUser> findUserByUsername(@RequestParam("username") String username) {
         return new ResponseEntity<>(userService.findByUserName(username), HttpStatus.OK);
     }
 
-    @PutMapping("/update-profile")
+    @PutMapping(UPDATE_PROFILE_BY_EMAIL)
     public ResponseEntity<ShopCartifyUser> updateUserProfileByEmail(
             @RequestParam("email") String userEmail,
             @RequestBody UserProfileUpdateRequest userProfileRequest) {
@@ -74,7 +82,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{userId}/change-password")
+    @PostMapping(CHANGE_PASSWORD_BY_ID)
     public ResponseEntity<ShopCartifyUser> changePassword(
             @PathVariable Long userId,
             @RequestBody ChangePasswordRequest changePasswordRequest) throws InvalidPasswordException {
@@ -91,7 +99,7 @@ public class UserController {
 //        return "customer/transaction-history";
 //    }
 
-    @PostMapping("/make-payment")
+    @PostMapping(MAKE_PAYMENT)
     public String makePayment(Model model, Principal principal, @RequestBody List<ReceiptItems> items, @RequestParam BigDecimal totalAmount) {
         String email = principal.getName();
         ShopCartifyUser customer = userService.findByEmail(email);

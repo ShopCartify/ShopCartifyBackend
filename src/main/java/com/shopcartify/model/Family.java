@@ -14,7 +14,7 @@
 //@Entity
 //@AllArgsConstructor
 //@NoArgsConstructor
-//@Table(name = "Family")
+////@Table(name = "Family")
 //public class Family {
 //
 //    @Id
@@ -22,12 +22,10 @@
 //    private Long id;
 //    private String familyName;
 //
-////    @ManyToMany
-////    @JoinTable(
-////            name = "family_members",
-////            joinColumns = @JoinColumn(name = "family_id"),
-////            inverseJoinColumns = @JoinColumn(name = "user_id")
-////    )
-////    private Set<ShopCartifyUser> members = new HashSet<>();
-////
-////}
+//    @OneToOne
+//    private ShopCartifyUser familyHead;
+//
+//    @OneToMany
+//    private Set<ShopCartifyUser> members = new HashSet<>();
+//
+//}

@@ -1,6 +1,7 @@
 package com.shopcartify.services.implementations;
 
 import com.shopcartify.cloud.CloudService;
+import com.shopcartify.dto.reqests.FindAllRequest;
 import com.shopcartify.dto.reqests.NewProductRequest;
 import com.shopcartify.dto.reqests.UpdateProductDetailRequest;
 import com.shopcartify.dto.responses.NewProductResponse;
@@ -19,18 +20,15 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
 
+import static com.shopcartify.enums.ExceptionMessage.*;
 import static com.shopcartify.utils.Constants.IMAGE_PATH;
 import static com.shopcartify.utils.QrCodeUtils.*;
 
@@ -54,7 +52,7 @@ public class ShopCartifyProductService implements ProductService {
 
         boolean isExisting = existBySupermarketCodeAndProductName( newProductRequest.getSupermarketCode(),newProductRequest.getProductName());
            if (isExisting)
-                throw new ProductAlreadyExistsException(newProductRequest.getProductName() + " already exists, use update Product");
+                throw new ProductAlreadyExistsException(newProductRequest.getProductName() + PRODUCT_ALREADY_EXIST.getMessage());
 
            Product product = mapper.map(newProductRequest, Product.class);
 
@@ -72,7 +70,7 @@ public class ShopCartifyProductService implements ProductService {
 
                savedProduct = productRepository.save(product);
                BeanUtils.copyProperties(savedProduct, newProductResponse);
-               newProductResponse.setMessage("Product added successfully");
+               newProductResponse.setMessage(PRODUCT_ADDED_SUCCESSFULLY.getMessage());
 
                sendEmailToSupermarketAdmin( qrcodeCloudImageUrl, newProductRequest.getSupermarketAdminEmail(),  savedProduct);
            }catch (Exception e) {
@@ -105,7 +103,7 @@ public class ShopCartifyProductService implements ProductService {
     public Product findProductBySupermarketCodeAndProductName(String supermarketCode, String productName) {
         return productRepository.findProductBySupermarketCodeAndProductName(supermarketCode, productName)
                 .orElseThrow(() ->
-                        new ProductNotFoundException( productName + " is not found"));
+                        new ProductNotFoundException( productName + " "+ PRODUCT_NOT_FOUND.getMessage()));
 
     }
     @Override
@@ -124,16 +122,21 @@ public class ShopCartifyProductService implements ProductService {
             log.info("ProductName: " + productName + " supermarketCode: "+ supermarketCode);
 
             Product product= productRepository.findProductBySupermarketCodeAndProductName(supermarketCode, productName)
-                    .orElseThrow(()-> new ProductNotFoundException("Product not found"));
+                    .orElseThrow(()-> new ProductNotFoundException(PRODUCT_NOT_FOUND.getMessage()));
 
             return product;
+    }
+    @Override
+    public Page<Product> findAllProductsWithPaginationAndSortingWithDirection(FindAllRequest findAllProductRequest) {
+        return productRepository
+                .findAll(PageRequest.of(findAllProductRequest.getOffset(), findAllProductRequest.getPageSite())
+                        .withSort(Sort.by(Sort.Direction
+                                .fromString(findAllProductRequest.getDirection()),findAllProductRequest.getField())));
 
     }
-
-
     @Override
-    public Optional<Product> findByProductId(Long productId) {
-        return Optional.ofNullable(productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException("Product with Id not found")));
+    public Product findByProductId(Long productId) {
+        return productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND.getMessage()));
     }
 
 
