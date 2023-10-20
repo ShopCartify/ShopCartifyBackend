@@ -34,7 +34,7 @@ public class UserController {
 
     private final ReceiptService receiptService;
 
-    private final WishlistService wishlistService;
+//    private final WishlistService wishlistService;
 
     private final ProductService productService;
 
