@@ -9,6 +9,7 @@ import com.shopcartify.repositories.CartProductRepository;
 import com.shopcartify.services.interfaces.CartProductService;
 import com.shopcartify.services.interfaces.ProductService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CartProductServiceImplementation implements CartProductService {
     private ProductService productService;
     private CartProductRepository cartProductRepository;
@@ -28,6 +30,7 @@ public class CartProductServiceImplementation implements CartProductService {
         CartProduct cartProduct = new CartProduct();
 
         BeanUtils.copyProperties(foundProduct,cartProduct);
+        log.info("This is the total number of products to be added to the cart product: "+updateCartRequest.getNumberOfProducts());
         cartProduct.setProductQuantity(updateCartRequest.getNumberOfProducts());
         cartProduct.setUniqueCartId(updateCartRequest.getUniqueCartId());
 

@@ -8,4 +8,5 @@ public class FindAllRequest {
     private int pageSite;
     private String direction;
     private String field ;
+    private String supermarketCode;
 }

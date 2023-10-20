@@ -129,11 +129,19 @@ public class ShopCartifyProductService implements ProductService {
     @Override
     public Page<Product> findAllProductsWithPaginationAndSortingWithDirection(FindAllRequest findAllProductRequest) {
         return productRepository
-                .findAll(PageRequest.of(findAllProductRequest.getOffset(), findAllProductRequest.getPageSite())
+                .findAllBySupermarketCode(findAllProductRequest.getSupermarketCode(),PageRequest.of(findAllProductRequest.getOffset(), findAllProductRequest.getPageSite())
                         .withSort(Sort.by(Sort.Direction
                                 .fromString(findAllProductRequest.getDirection()),findAllProductRequest.getField())));
 
     }
+//    @Override
+//    public Page<Product> findAllProductsWithPaginationAndSortingWithDirection(FindAllRequest findAllProductRequest) {
+//        return productRepository
+//                .findAll(PageRequest.of(findAllProductRequest.getOffset(), findAllProductRequest.getPageSite())
+//                        .withSort(Sort.by(Sort.Direction
+//                                .fromString(findAllProductRequest.getDirection()),findAllProductRequest.getField())));
+//
+//    }
     @Override
     public Product findByProductId(Long productId) {
         return productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND.getMessage()));

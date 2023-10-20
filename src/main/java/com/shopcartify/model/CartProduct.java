@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @Entity
@@ -19,6 +20,7 @@ public class CartProduct {
     private String productDescription;
     private String supermarketCode;
     private String uniqueCartId;
+    private Date date = new Date();
 
 //    @JoinColumn(name = "cart_products_id")
 

@@ -36,6 +36,7 @@ public class CartServiceImplementation implements CartService {
     @Override
 
     public CartResponse addToCart(UpdateCartRequest updateCartRequest) {
+        log.info("At the start of the add to cart request method, " + updateCartRequest);
         Cart cart = new Cart();
         if( updateCartRequest.getUniqueCartId() == null ||updateCartRequest.getUniqueCartId().isEmpty() ){
             cart = generateCart();
@@ -52,7 +53,7 @@ public class CartServiceImplementation implements CartService {
                 cart = generateCart();
             }
         }
-
+        log.info("Right before the cart product is created : "+cart);
             updateCartRequest.setUniqueCartId(cart.getUniqueCartId());
             CartProduct cartProduct = cartProductService.createCartProduct(updateCartRequest);
 
@@ -68,6 +69,7 @@ public class CartServiceImplementation implements CartService {
             cart.setCartProductIds(cartProductIds);
 
         }
+        log.info("Cart Product has been created and does not exist in the cart ");
 
             Cart savedCart = cartRepository.save(cart);
 //            cart.getCartProducts().add(cartProduct);
